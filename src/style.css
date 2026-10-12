@@ -1,37 +1,14 @@
-:root { font-family: Inter, "Segoe UI", Arial, sans-serif; color: #183249; background: #f5f8fb; font-synthesis: none; }
 * { box-sizing: border-box; }
-body { margin: 0; }
-.topbar { padding: 26px max(28px, calc((100vw - 1200px) / 2)); background: #0b1f33; color: white; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.brand { font-size: 23px; font-weight: 750; color: white; text-decoration: none; }
-.brand span { display: block; margin-top: 5px; color: #92b2c7; font-size: 13px; font-weight: 400; }
-.release { color: #d0e5ef; font-size: 17px; white-space: nowrap; }
-.release strong { margin-left: 5px; color: #42d2df; font-size: 23px; }
-main { width: min(1200px, calc(100% - 56px)); margin: 80px auto 70px; display: grid; grid-template-columns: 0.85fr 1.3fr; gap: 64px; align-items: center; }
-.eyebrow { color: #007584; font-size: 12px; letter-spacing: 1.8px; font-weight: 700; margin: 0 0 22px; }
-h1 { font-size: clamp(36px, 4vw, 53px); line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 25px; }
-.description { color: #5c7082; font-size: 18px; line-height: 1.65; }
-.controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
-button { border: 1px solid #007584; border-radius: 6px; background: #007584; padding: 13px 18px; color: white; font: inherit; font-weight: 600; cursor: pointer; }
-button:hover:not(:disabled) { background: #00616d; }
-button.secondary { background: transparent; color: #007584; }
-button.secondary:hover:not(:disabled) { background: #e1f2f4; }
-button:disabled { opacity: 0.5; cursor: default; }
-button:focus-visible, a:focus-visible { outline: 3px solid #f2b84b; outline-offset: 4px; }
-#status { min-height: 42px; font-size: 15px; line-height: 1.5; color: #087c63; margin: 18px 0 10px; }
-#status.error { color: #b63838; }
-.privacy { color: #687d8e; font-size: 13px; line-height: 1.6; }
-.camera { background: #0b1f33; border-radius: 10px; overflow: hidden; box-shadow: 0 18px 45px #19364d18; }
-.camera-heading { display: flex; align-items: center; gap: 9px; color: #bed1df; padding: 18px 22px; font-size: 13px; }
-#indicator { width: 8px; height: 8px; border-radius: 50%; background: #617c90; }
-#indicator.active { background: #46d7a6; }
-.viewport { aspect-ratio: 4 / 3; position: relative; background: #10283d; }
-video { width: 100%; height: 100%; object-fit: contain; display: block; transform: scaleX(-1); }
-#placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #b8cddd; }
-#placeholder[hidden] { display: none; }
-.camera-icon { color: #20b8cd; font-size: 66px; line-height: 1; }
-#placeholder p { font-size: 19px; margin: 22px 0 10px; }
-#placeholder small { color: #7f9caf; font-size: 13px; }
-footer { width: min(1200px, calc(100% - 56px)); margin: 0 auto; border-top: 1px solid #dce5ed; padding: 23px 0 28px; color: #6e8293; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 12px; }
-footer code { color: #35556c; }
-@media (max-width: 850px) { main { grid-template-columns: 1fr; gap: 34px; margin-top: 42px; } h1 br { display: none; } .intro { max-width: 620px; } .camera { width: 100%; } }
-@media (max-width: 460px) { .topbar { padding: 20px; } main, footer { width: calc(100% - 40px); } .brand { font-size: 20px; } .release, .release strong { font-size: 16px; } main { margin-bottom: 40px; } }
+body { margin: 0; padding: 24px 16px; font-family: Arial, sans-serif; color: #222; background: white; }
+main { max-width: 720px; margin: 0 auto; }
+h1 { margin: 0 0 12px; font-size: 28px; }
+p { line-height: 1.5; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+button { padding: 10px 16px; border: 1px solid #bbb; border-radius: 4px; background: #f3f3f3; color: #222; font: inherit; cursor: pointer; }
+button:hover:not(:disabled) { background: #e5e5e5; }
+button:disabled { opacity: 0.45; cursor: default; }
+button:focus-visible { outline: 3px solid #2678cb; outline-offset: 3px; }
+video { display: block; width: 100%; aspect-ratio: 4 / 3; background: #222; object-fit: contain; transform: scaleX(-1); }
+#status { min-height: 24px; margin: 16px 0; }
+#status.error { color: #a52222; }
+.commit { color: #777; font-size: 12px; }
