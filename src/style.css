@@ -11,4 +11,3 @@ button:focus-visible { outline: 3px solid #2678cb; outline-offset: 3px; }
 video { display: block; width: 100%; aspect-ratio: 4 / 3; background: #222; object-fit: contain; transform: scaleX(-1); }
 #status { min-height: 24px; margin: 16px 0; }
 #status.error { color: #a52222; }
-.commit { color: #777; font-size: 12px; }

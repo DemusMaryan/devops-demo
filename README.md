@@ -59,7 +59,6 @@ npm run dev
 - `needs: build`: deploy чекає успішних тестів і build.
 - `package-lock.json` та `npm ci`: встановлення за lockfile.
 - `pages: write` та `id-token: write`: лише у deploy job.
-- `VITE_COMMIT_SHA`: сайт показує commit, який зібрав workflow.
 - `base: './'`: відносні шляхи assets працюють із різними назвами репозиторію.
 
 ## Тести

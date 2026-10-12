@@ -3,7 +3,6 @@ import { createCameraController } from './camera.js';
 
 // Change this value to 2.0 during the live deployment demonstration.
 const VERSION = '1.0';
-const COMMIT = import.meta.env.VITE_COMMIT_SHA || 'local';
 
 document.querySelector('#app').innerHTML = `
   <main>
@@ -15,7 +14,6 @@ document.querySelector('#app').innerHTML = `
     </div>
     <p id="status" role="status" aria-live="polite">Камера вимкнена</p>
     <video id="video" autoplay playsinline muted aria-label="Зображення з камери"></video>
-    <p class="commit">Commit: <code id="commit"></code></p>
   </main>
 `;
 
@@ -24,8 +22,6 @@ const start = document.querySelector('#start');
 const stop = document.querySelector('#stop');
 const status = document.querySelector('#status');
 document.querySelector('#version').textContent = VERSION;
-document.querySelector('#commit').textContent = COMMIT === 'local' ? COMMIT : COMMIT.slice(0, 7);
-document.querySelector('#commit').title = COMMIT;
 
 function errorMessage(error) {
   const messages = {
