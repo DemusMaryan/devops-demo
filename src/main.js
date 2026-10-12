@@ -1,8 +1,9 @@
 import './style.css';
 import { createCameraController } from './camera.js';
+import { createFaceOverlay } from './face-detector.js';
 
-// Change this value to 2.0 during the live deployment demonstration.
-const VERSION = '2.0';
+// This deployment adds live face detection.
+const VERSION = '3.0';
 
 document.querySelector('#app').innerHTML = `
   <main>
@@ -13,7 +14,10 @@ document.querySelector('#app').innerHTML = `
       <button id="stop" type="button" disabled>Зупинити</button>
     </div>
     <p id="status" role="status" aria-live="polite">Камера вимкнена</p>
-    <video id="video" autoplay playsinline muted aria-label="Зображення з камери"></video>
+    <div class="preview">
+      <video id="video" autoplay playsinline muted aria-label="Зображення з камери"></video>
+      <canvas id="boxes" aria-hidden="true"></canvas>
+    </div>
   </main>
 `;
 
@@ -22,6 +26,18 @@ const start = document.querySelector('#start');
 const stop = document.querySelector('#stop');
 const status = document.querySelector('#status');
 document.querySelector('#version').textContent = VERSION;
+
+const overlay = createFaceOverlay({
+  video,
+  canvas: document.querySelector('#boxes'),
+  onLoading: () => { status.textContent = 'Камера працює. Завантажую детектор…'; },
+  onResult: count => { status.textContent = `Камера працює. Облич: ${count}`; },
+  onError: error => {
+    console.error('Face detection:', error);
+    status.textContent = 'Камера працює. Не вдалося запустити детекцію облич.';
+    status.classList.add('error');
+  },
+});
 
 function errorMessage(error) {
   const messages = {
@@ -42,11 +58,13 @@ const controller = createCameraController({
     return navigator.mediaDevices.getUserMedia(constraints);
   },
   onState: ({ state, error }) => {
+    overlay.stop();
     const labels = { idle: 'Камера вимкнена', requesting: 'Очікуємо дозвіл на камеру…', running: 'Камера працює', error: 'Камера недоступна' };
     start.disabled = state === 'requesting' || state === 'running';
     stop.disabled = state !== 'requesting' && state !== 'running';
     status.classList.toggle('error', state === 'error');
     status.textContent = state === 'error' ? errorMessage(error) : labels[state];
+    if (state === 'running') overlay.start();
   },
 });
 

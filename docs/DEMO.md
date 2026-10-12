@@ -43,7 +43,7 @@ git push
 1. Checkout source: код потрапив на runner.
 2. Set up Node.js: підготовлено Node 24.
 3. Install locked dependencies: `npm ci`.
-4. Test camera lifecycle: **7 тестів**.
+4. Test camera lifecycle: **12 тестів**.
 5. Build website: створено `dist/`.
 6. Upload website artifact: артефакт містить готові файли.
 7. Deploy to GitHub Pages: окремий job із `needs: build`.
@@ -103,3 +103,9 @@ git push
 | Чому PR не змінює сайт? | Умови if обмежують deployment гілкою main і виключають pull_request. |
 | Успішний build гарантує роботу камери? | Потрібна також перевірка пристрою, HTTPS і дозволів у браузері. |
 | Чому немає SSH-ключа? | Pages використовує GITHUB_TOKEN/OIDC через офіційні actions. |
+
+## Показ нової функції
+
+Версія 2.0 лише показувала камеру. Версія 3.0 також малює рамки навколо облич. Відкрий відповідний commit та Actions, поясни, що той самий pipeline доставив нову функцію. На сайті натисни Start, дочекайся завантаження детектора, покажи обличчя й зелену рамку. Після Stop рамки зникають і потік зупиняється.
+
+Для повторного показу зміни VERSION 3.0 на 3.1 або колір рамки в src/face-detector.js. Не вимикай тести та build.

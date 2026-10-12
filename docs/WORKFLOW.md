@@ -18,7 +18,7 @@ Steps виконуються послідовно. `uses` викликає го�
 2. `setup-node` готує Node.js 24 та кеш завантажень npm. Кеш не замінює `npm ci`.
 3. `npm ci` встановлює залежності за package-lock.json.
 4. `npm test` запускає Node test runner.
-5. `npm run build` збирає frontend.
+5. `npm run build` спочатку виконує prebuild: готує WASM і модель, потім збирає frontend.
 6. `configure-pages` читає налаштування Pages; Source треба попередньо встановити вручну.
 7. `upload-pages-artifact` пакує dist/ для deployment.
 
