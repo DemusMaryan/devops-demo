@@ -25,31 +25,31 @@ npm run preview
 
 `preview` лише локально віддає файли `dist/`. Для камери на опублікованому сайті потрібні HTTPS, під’єднаний пристрій і дозвіл браузера. Відео не передається на сервер і не записується. Детекцію облич до цієї версії не додано.
 
-## Створення репозиторію у GitHub
+## Робота з цим репозиторієм
 
-1. Створи порожній репозиторій **devops-demo** у своєму акаунті. Для GitHub Pages на GitHub Free використовуй **Public**. Не додавай README, license чи .gitignore під час створення: вони вже є в проєкті.
-2. У локальній папці виконай:
+Репозиторій: [maryangemini/devops-demo](https://github.com/maryangemini/devops-demo).
 
-```powershell
-git init -b main
-git add .
-git commit -m "Add Camera Demo and GitHub Actions workflow"
-git remote add origin https://github.com/YOUR_USERNAME/devops-demo.git
-```
-
-У URL заміни `YOUR_USERNAME` на свій GitHub login. Якщо Git просить автора комітів, налаштуй **свої** `user.name` та `user.email`. Авторизуйся через стандартний Git Credential Manager, який відкриє браузер. Не вставляй токен або пароль у код проєкту.
-
-3. Поки що **не роби push**. У GitHub відкрий `Settings` → `Pages` → `Build and deployment` → `Source` і вибери **GitHub Actions**.
-4. Виконай:
+Для роботи на своєму ПК клонуй його у **нову папку**, щоб отримати історію комітів і налаштований origin:
 
 ```powershell
-git push -u origin main
+git clone https://github.com/maryangemini/devops-demo.git
+cd devops-demo
+npm ci
+npm test
+npm run dev
 ```
 
-5. Відкрий вкладку **Actions**, обери `Camera Demo CI/CD`, дочекайся успішних `Test and build` та `Deploy to GitHub Pages`.
-6. Відкрий адресу з deployment або `Settings` → `Pages`. Вона зазвичай має вигляд `https://YOUR_USERNAME.github.io/devops-demo/`.
+Якщо вже маєш цю папку після clone, відкрий її й виконай `git pull`. Не ініціалізуй повторно Git у старій розпакованій копії: простіше почати з clone.
 
-Якщо GitHub не дозволяє налаштувати Pages у порожньому repo, зроби перший push, налаштуй Source, потім у Actions перезапусти workflow через **Re-run all jobs**. Якщо сайт недоступний одразу після першого deployment, перевір посилання й стан Pages.
+## Увімкнення GitHub Pages
+
+1. Відкрий [Settings → Pages](https://github.com/maryangemini/devops-demo/settings/pages).
+2. У `Build and deployment` → `Source` вибери **GitHub Actions**.
+3. У [Actions](https://github.com/maryangemini/devops-demo/actions) відкрий workflow `Camera Demo CI/CD`. Якщо перший запуск завершився помилкою на Configure GitHub Pages, після налаштування Source натисни **Re-run all jobs**.
+4. Дочекайся успішних jobs `Test and build` і `Deploy to GitHub Pages`.
+5. Адреса сайту після успішної публікації: `https://maryangemini.github.io/devops-demo/`.
+
+Для наступних змін виконай звичайні `git add`, `git commit` і `git push`. Авторизація на ПК відбувається через Git Credential Manager. Якщо Git просить автора комітів, налаштуй свої `user.name` і `user.email`.
 
 ## Що вже налаштовано
 
