@@ -2,7 +2,7 @@ import './style.css';
 import { createCameraController } from './camera.js';
 
 // Change this value to 2.0 during the live deployment demonstration.
-const VERSION = '1.0';
+const VERSION = '2.0';
 
 document.querySelector('#app').innerHTML = `
   <main>
