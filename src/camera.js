@@ -3,7 +3,7 @@ export function stopCamera(video) {
   if (stream) {
     for (const track of stream.getTracks()) track.stop();
   }
-  // video.srcObject = null; // DEMO: навмисна помилка; не зливати в main.
+   video.srcObject = null; 
 }
 
 export function createCameraController({ video, getUserMedia, onState = () => {} }) {
