@@ -9,7 +9,7 @@
 - [Функція Stop](https://github.com/maryangemini/devops-demo/blob/main/src/camera.js) і [перший тест](https://github.com/maryangemini/devops-demo/blob/main/test/camera.test.js).
 - [Редактор VERSION](https://github.com/maryangemini/devops-demo/edit/main/src/main.js).
 - [Actions](https://github.com/maryangemini/devops-demo/actions).
-- [Чернетковий PR](https://github.com/maryangemini/devops-demo/pulls) з назвою **Demo: failed Stop test — do not merge**. У ньому відкрий Checks → невдалий Run tests; також збережи пряме посилання на цей запуск.
+- [Чернетковий PR №1](https://github.com/maryangemini/devops-demo/pull/1) з назвою **Demo: failed Stop test — do not merge**. Для швидкого показу відкрий [невдалий запуск](https://github.com/maryangemini/devops-demo/actions/runs/38593617284/job/115954568367) → Run tests.
 
 ## План за слайдами
 
@@ -98,6 +98,12 @@ const VERSION = '3.1';
 Скажи: «Зміна пройшла перевірку, готові файли опублікувалися на GitHub Pages, і користувач отримав нову версію за тією самою адресою».
 
 Це справжнє розгортання статичного сайту на хостингу GitHub Pages. Тут немає власного VPS, SSH або серверного backend. Runner і хостинг — різні середовища.
+
+## Перевірені заготовки
+
+- [Успішні CI та deployment](https://github.com/maryangemini/devops-demo/actions/runs/38593449003): обидва jobs завершились успішно.
+- [Навмисно невдалий CI](https://github.com/maryangemini/devops-demo/actions/runs/38593617284): Run tests — failure, Build website та deploy — skipped.
+- [Зміна, яку знайшов тест](https://github.com/maryangemini/devops-demo/pull/1/files): один закоментований рядок у stopCamera.
 
 ## Перед виступом
 

@@ -31,7 +31,7 @@
 - **`needs: build`:** deploy залежить від успіху job build.
 - **Artifact:** передає готову папку `dist/` із job build у deployment.
 
-Готовий приклад невдалої перевірки — чернетковий PR із гілки `demo/failing-test`. Він призначений для показу логів; не зливай його в main. Інструкція: [docs/DEMO.md](docs/DEMO.md).
+Готовий приклад невдалої перевірки — [чернетковий PR №1](https://github.com/maryangemini/devops-demo/pull/1) із гілки `demo/failing-test`. [Відкрити червоний запуск](https://github.com/maryangemini/devops-demo/actions/runs/38593617284). Він призначений для показу логів; не зливай його в main. Інструкція: [docs/DEMO.md](docs/DEMO.md).
 
 ## Де наш сервер
 
