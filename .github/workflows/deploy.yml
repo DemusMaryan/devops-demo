@@ -1,5 +1,6 @@
 name: Camera Demo CI/CD
 
+# Коли запускати workflow: зміни main, pull request або вручну.
 on:
   push:
     branches: [main]
@@ -10,12 +11,13 @@ on:
 permissions:
   contents: read
 
-# Queue production deployments; do not interrupt a deployment in progress.
+# Службове налаштування: не переривати активний запуск для цієї гілки.
 concurrency:
   group: camera-demo-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
+  # CI: отримати код, встановити залежності, перевірити та зібрати.
   build:
     name: Test and build
     runs-on: ubuntu-latest
@@ -32,10 +34,11 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
-      - name: Test camera lifecycle
+      - name: Run tests
         run: npm test
       - name: Build website
         run: npm run build
+      # Для PR далі публікації немає: перевіряємо лише тести та збірку.
       - name: Configure GitHub Pages
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/configure-pages@v6
@@ -45,10 +48,11 @@ jobs:
         with:
           path: dist
 
+  # CD: опублікувати готовий сайт після успішного build.
   deploy:
     name: Deploy to GitHub Pages
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
+    needs: build # Без успішного CI цей job не запускається.
     runs-on: ubuntu-latest
     permissions:
       pages: write

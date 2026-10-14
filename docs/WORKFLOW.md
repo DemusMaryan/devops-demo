@@ -1,52 +1,43 @@
-# Розбір workflow
+# Workflow: тільки головні поняття
 
-`deploy.yml` містить два jobs: `build` і `deploy`.
+Файл [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml) — YAML-опис автоматичного процесу. У ньому два jobs: `build` та `deploy`.
 
-## Запуск
+| Частина | Що означає у нашому проєкті |
+| --- | --- |
+| `on` | Запуск на push у main, PR до main або вручну |
+| `jobs` | Окремі завдання workflow |
+| `runs-on: ubuntu-latest` | GitHub надає runner із Ubuntu для виконання job |
+| `steps` | Послідовність кроків усередині job |
+| `uses` | Виклик готового action: checkout, setup-node або deploy-pages |
+| `run` | Запуск команди на runner: npm ci, npm test, npm run build |
+| `needs: build` | Deploy чекає успішного завершення build job |
+| `if` | Тут дозволяє публікацію лише з main і виключає PR |
 
-- `push.branches: [main]` реагує на push у main.
-- `pull_request.branches: [main]` перевіряє PR, базова гілка якого main.
-- `workflow_dispatch` дозволяє ручний запуск. Workflow має бути у default branch, щоб GitHub показав відповідну кнопку.
+## CI — job build
 
-Якщо замінити фільтр push на develop, автоматичний запуск для main зникне. Окрема умова deploy все одно дозволяє публікацію лише з main: для свідомого перенесення deployment потрібно узгодити обидві умови та політику environment.
+1. `actions/checkout` отримує код цього запуску.
+2. `actions/setup-node` готує Node.js 24.
+3. `npm ci` встановлює залежності за `package-lock.json`.
+4. `npm test` викликає `node --test` із `package.json`: 12 написаних для проєкту unit tests.
+5. `npm run build` викликає Vite, який створює готові файли в `dist/`. Перед ним npm автоматично запускає `prebuild` для файлів детектора.
+6. Для main налаштовується Pages та завантажується artifact із `dist/`.
 
-## Build job
+Тести написані нами; Node.js лише надає механізм їх виконання. Вони використовують mock stream. Реальну камеру перевіряємо окремо у браузері.
 
-Steps виконуються послідовно. `uses` викликає готовий action, `run` запускає команду.
+## CD — job deploy
 
-1. `checkout` отримує код.
-2. `setup-node` готує Node.js 24 та кеш завантажень npm. Кеш не замінює `npm ci`.
-3. `npm ci` встановлює залежності за package-lock.json.
-4. `npm test` запускає Node test runner.
-5. `npm run build` спочатку виконує prebuild: готує WASM і модель, потім збирає frontend.
-6. `configure-pages` читає налаштування Pages; Source треба попередньо встановити вручну.
-7. `upload-pages-artifact` пакує dist/ для deployment.
+`needs: build` пов'язує два jobs. `actions/deploy-pages` бере підготовлений artifact і публікує сайт на GitHub Pages. Дозволи `pages: write`, `id-token: write` і `environment: github-pages` потрібні цьому механізму публікації.
 
-Останні два steps виконуються лише для main і не для pull request. Build має `contents: read` для коду та `pages: read` для метаданих Pages.
+## Що буде при помилці
 
-## Deploy job
+Якщо `npm test` повертає ненульовий код завершення, його step та job build завершуються помилкою. Звичайні наступні steps пропускаються. Через `needs: build` job deploy теж пропускається. Попередні опубліковані файли залишаються доступними.
 
-- `needs: build` створює залежність від успішного build job.
-- `if` виключає pull requests та інші гілки.
-- `pages: write` дозволяє deployment у Pages.
-- `id-token: write` дозволяє отримати OIDC-токен.
-- `environment: github-pages` використовує відповідне середовище deployment.
-- `deploy-pages` публікує артефакт, підготовлений build job.
+Успішні тести та build не гарантують відсутності всіх помилок. Вони перевіряють ті властивості, які ми заклали в тести, і здатність зібрати проєкт.
 
-Без `needs` jobs незалежні. Якщо Test або Build падає, звичайні наступні steps пропускаються, а deploy також пропускається. Тут немає `continue-on-error` та `if: always()`, які могли б змінити цю поведінку.
+PR проходить CI, але не публікує сайт через `if`. CI сам по собі не забороняє натиснути Merge: для цього налаштовують required status checks. Основна гілка цього демо не має такого захисту.
 
-## Concurrency
+## На доповіді достатньо цього
 
-Для однієї гілки workflow використовують спільну групу. `cancel-in-progress: false` не перериває вже активний run. GitHub може замінити pending run новішим, тож це не гарантує виконання кожного commit у черзі.
+Покажи `on`, кроки CI, `needs` та action публікації. Кеш npm, права й concurrency можна не розбирати, якщо про них не запитають. Вони залишені як службові налаштування робочого workflow. `cancel-in-progress: false` не перериває активний запуск; це не гарантія, що кожен pending запуск буде виконаний.
 
-## Відмінності від скорочених слайдів
-
-- Додано перевірку pull requests без deployment.
-- Права розділено між jobs.
-- Для цього односторінкового застосунку `base: './'` використовує відносні URL замість фіксованого `/devops-demo/`. Назву repo можна змінити без редагування base.
-
-## Важливі межі перевірки
-
-Unit tests використовують mock stream. Вони перевіряють логіку, але не фізичну камеру. До виступу протестуй реальні дозволи та відео на своєму ПК.
-
-Офіційні довідки: [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax), [Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [npm ci](https://docs.npmjs.com/cli/v11/commands/npm-ci/), [Vite relative base](https://vite.dev/guide/build#relative-base).
+[GitHub Actions](https://docs.github.com/en/actions/get-started/understand-github-actions) · [Pages workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)

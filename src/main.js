@@ -2,7 +2,7 @@ import './style.css';
 import { createCameraController } from './camera.js';
 import { createFaceOverlay } from './face-detector.js';
 
-// This deployment adds live face detection.
+// Показ деплою: під час доповіді зміни лише VERSION з 3.0 на 3.1.
 const VERSION = '3.0';
 
 document.querySelector('#app').innerHTML = `

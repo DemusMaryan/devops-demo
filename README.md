@@ -1,37 +1,47 @@
-# DevOps Camera Demo
+# GitHub Actions: від зміни коду до оновлення сайту
 
-Навчальний вебзастосунок для доповіді про GitHub Actions. Користувач натискає кнопку, дозволяє доступ до камери й бачить відео із рамками навколо облич. Зміна коду в `main` запускає тести, production build і публікацію у GitHub Pages.
+Навчальний приклад для тезисної доповіді на 15 хвилин. Сайт показує відео з камери та просту детекцію облич. GitHub Actions автоматично запускає тести, збирає сайт і публікує зміни на GitHub Pages.
 
-## Локальний запуск у Windows / PowerShell
+**[Відкрити сайт](https://maryangemini.github.io/devops-demo/)** · **[Запуски Actions](https://github.com/maryangemini/devops-demo/actions)** · **[Що показувати на кожному слайді](docs/DEMO.md)**
 
-Потрібні Node.js **24.x** і Git. Команди виконуються у папці проєкту.
+## Головна демонстрація
 
-```powershell
-node --version
-git --version
-npm ci
-npm test
-npm run dev
-```
+1. Показати опубліковану **Version 3.0**.
+2. Через редактор GitHub змінити в `src/main.js` лише `const VERSION = '3.0';` на `const VERSION = '3.1';` і зробити commit у `main`.
+3. Відкрити новий запуск Actions: **Run tests → Build website → Deploy to GitHub Pages**.
+4. Після успішного deploy оновити ту саму адресу сайту й показати **Version 3.1**.
 
-Відкрий адресу, яку надрукує Vite (зазвичай `http://localhost:5173/`). Якщо PowerShell блокує `npm.ps1`, використовуй `npm.cmd ci`, `npm.cmd test` і `npm.cmd run dev`.
+Термінал і VS Code для цього показу не потрібні. Якщо вже репетирував, використай наступне значення VERSION: головне, щоб було видно зміну.
 
-Для перевірки production build зупини dev server через Ctrl+C:
+## Файли, які показуємо на доповіді
 
-```powershell
-npm run build
-npm run preview
-```
+| Файл | Що пояснити |
+| --- | --- |
+| [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) | `on`, два jobs, команди CI, `needs: build`, публікація |
+| [`package.json`](package.json) | `npm test` викликає `node --test`; build викликає Vite |
+| [`src/camera.js`](src/camera.js) | Перша функція `stopCamera` зупиняє потік і очищує відео |
+| [`test/camera.test.js`](test/camera.test.js) | Перший тест перевіряє поведінку Stop |
+| [`src/main.js`](src/main.js) | Один рядок VERSION для живого показу деплою |
 
-`preview` лише локально віддає файли `dist/`. Для камери на опублікованому сайті потрібні HTTPS, під’єднаний пристрій і дозвіл браузера. Відео не передається на сервер і не записується. У версії 3.0 MediaPipe BlazeFace знаходить обличчя та малює зелені рамки поверх відео. Перший запуск потребує завантаження файлів детектора із сайту.
+## Що автоматизовано
 
-## Робота з цим репозиторієм
+- **Push у main:** встановлення залежностей → 12 unit tests → build → публікація.
+- **Pull request у main:** ті самі тести та build, без публікації.
+- **Помилка тесту:** наступний крок build і залежний deploy пропускаються; попередня опублікована версія працює далі.
+- **`needs: build`:** deploy залежить від успіху job build.
+- **Artifact:** передає готову папку `dist/` із job build у deployment.
 
-Репозиторій: [maryangemini/devops-demo](https://github.com/maryangemini/devops-demo).
+Готовий приклад невдалої перевірки — чернетковий PR із гілки `demo/failing-test`. Він призначений для показу логів; не зливай його в main. Інструкція: [docs/DEMO.md](docs/DEMO.md).
 
-Для роботи на своєму ПК клонуй його у **нову папку**, щоб отримати історію комітів і налаштований origin:
+## Де наш сервер
 
-```powershell
+GitHub Pages — хостинг статичного сайту. Після deploy він віддає нові HTML, JavaScript, CSS, WASM і модель за тією самою HTTPS-адресою. Runner є тимчасовим середовищем для команд CI, а не сервером сайту. Камера та детекція працюють у браузері; застосунок не завантажує відео на сервер.
+
+## Локальний запуск — за потреби
+
+Потрібні Node.js 24.x і Git. Команди виконуються всередині папки `devops-demo`:
+
+```sh
 git clone https://github.com/maryangemini/devops-demo.git
 cd devops-demo
 npm ci
@@ -39,67 +49,10 @@ npm test
 npm run dev
 ```
 
-Якщо вже маєш цю папку після clone, відкрий її й виконай `git pull`. Не ініціалізуй повторно Git у старій розпакованій копії: простіше почати з clone.
+Відкрий адресу з термінала. `npm run build` створює `dist/`; `npm run preview` показує цю збірку локально. Перед dev/build скрипт готує файли MediaPipe, тому для першого запуску потрібен інтернет. У PowerShell за потреби використовуй `npm.cmd` замість `npm`.
 
-## Увімкнення GitHub Pages
+## Перед виступом
 
-1. Відкрий [Settings → Pages](https://github.com/maryangemini/devops-demo/settings/pages).
-2. У `Build and deployment` → `Source` вибери **GitHub Actions**.
-3. У [Actions](https://github.com/maryangemini/devops-demo/actions) відкрий workflow `Camera Demo CI/CD`. Якщо перший запуск завершився помилкою на Configure GitHub Pages, після налаштування Source натисни **Re-run all jobs**.
-4. Дочекайся успішних jobs `Test and build` і `Deploy to GitHub Pages`.
-5. Адреса сайту після успішної публікації: `https://maryangemini.github.io/devops-demo/`.
+Перевір доступ до GitHub, інтернет, камеру та дозвіл браузера на тому ПК, з якого показуватимеш. Відкрий презентацію, сайт, редактор VERSION, workflow і заготовлений невдалий запуск. Зроби запис успішного оновлення як запасний варіант при повільній мережі.
 
-Для наступних змін виконай звичайні `git add`, `git commit` і `git push`. Авторизація на ПК відбувається через Git Credential Manager. Якщо Git просить автора комітів, налаштуй свої `user.name` і `user.email`.
-
-## Що вже налаштовано
-
-- `push` у `main`: тести, build, upload artifact, deployment.
-- Pull request у `main`: тести та build без публікації сайту.
-- `workflow_dispatch`: ручний запуск workflow з вкладки Actions.
-- `needs: build`: deploy чекає успішних тестів і build.
-- `package-lock.json` та `npm ci`: встановлення за lockfile.
-- `pages: write` та `id-token: write`: лише у deploy job.
-- `base: './'`: відносні шляхи assets працюють із різними назвами репозиторію.
-
-## Тести
-
-`npm test` використовує вбудований Node.js test runner. Перевіряються звільнення всіх tracks, повторний Stop, запуск, відмова в дозволі з повторною спробою, скасування запиту, повторний Start, помилка playback та від’єднання камери.
-
-Додаткові тести перевіряють рамки та життєвий цикл детектора: скасування завантаження, звільнення моделі, повторну спробу та зупинку inference. Це unit tests із mock stream. Вони не підтверджують доступ до реального пристрою. Окремо перевір кнопку, дозволи, відео та Stop у своєму браузері.
-
-## Підготовка показу
-
-[Сценарій на 3–4 хвилини](docs/DEMO.md) пояснює оновлення Version 1.0 → 2.0 і безпечний показ тесту, що падає. [Розбір YAML](docs/WORKFLOW.md) пояснює workflow та відмінності від скорочених фрагментів презентації.
-
-## Основні файли
-
-| Файл | Призначення |
-| --- | --- |
-| `src/main.js` | Інтерфейс, VERSION, повідомлення користувачу |
-| `src/camera.js` | Життєвий цикл відеопотоку |
-| `src/style.css` | Оформлення |
-| `src/face-detector.js` | MediaPipe BlazeFace та рамки на canvas |
-| `scripts/prepare-vision.mjs` | Підготовка WASM і моделі для хостингу |
-| `test/camera.test.js` | Unit tests |
-| `.github/workflows/deploy.yml` | CI/CD |
-| `vite.config.js` | Шляхи production assets |
-
-## Документація
-
-- [GitHub Actions](https://docs.github.com/en/actions/get-started/understand-github-actions)
-- [Custom workflows for Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
-- [Vite deployment](https://vite.dev/guide/static-deploy)
-- [Vite relative base](https://vite.dev/guide/build#relative-base)
-- [getUserMedia](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia)
-
-Версії actions записано через major tags для читабельності навчального прикладу. У production їх можна закріпити на перевірених повних commit SHA.
-
-## Детекція облич у версії 3.0
-
-Модель: MediaPipe BlazeFace short-range, float16, вхід 128×128. JavaScript-пакет @mediapipe/tasks-vision 1.1.0, CPU/WASM. Обробка працює у браузері приблизно до 10 запусків inference за секунду; це обмеження частоти, а не гарантія FPS на будь-якому ПК. Відео відображається окремо.
-
-Камера показує оригінальний потік. Детектор читає кадр і повертає bounding boxes, а canvas малює рамки поверх відео. Stop зупиняє відеопотік і цикл детекції. Якщо модель не завантажилась, відео продовжує працювати й сторінка показує повідомлення.
-
-Перед dev і build npm автоматично запускає prepare-vision.mjs. Він копіює WASM із встановленого npm-пакета та завантажує версіоновану модель Google з перевіркою SHA-256. Згенеровані файли public/vision/ не комітяться. Вони входять у dist/ та artifact, тому у браузері немає залежності від стороннього CDN. Під час першої підготовки потрібен доступ до storage.googleapis.com.
-
-[Офіційний опис моделі](https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector) і [JavaScript API](https://ai.google.dev/edge/mediapipe/solutions/vision/face_detector/web_js).
+[Короткий розбір workflow](docs/WORKFLOW.md) · [GitHub Actions](https://docs.github.com/en/actions/get-started/understand-github-actions) · [Публікація через Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
